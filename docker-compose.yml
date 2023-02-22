@@ -3,29 +3,22 @@ version: "3"
 services:
   database:
     build: ./database
+    container_name: database
     restart: always
     ports:
       - "3306:3306"
+    networks:
+      - spring_net
 
-#services:
-#  database:
-#    build: ./database
-#    container_name: database
-#    restart: always
-#    ports:
-#      - "3306:3306"
-#    networks:
-#      - spring_net
-#
-#  random_code:
-#    build: ./random_code
-#    ports:
-#      - "8080:8080"
-#    restart: always
-#    networks:
-#      - spring_net
-#    depends_on:
-#      - database
-#
-#networks:
-#  spring_net:
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    restart: always
+    networks:
+      - spring_net
+    depends_on:
+      - database
+
+networks:
+  spring_net:

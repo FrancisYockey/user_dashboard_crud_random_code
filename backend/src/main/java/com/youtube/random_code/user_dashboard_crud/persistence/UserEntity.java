@@ -15,7 +15,11 @@ public class UserEntity {
 
 	public UserEntity() {}
 
-	public UserEntity(String name, String email, String status) {
+	public UserEntity(
+		String name,
+		String email,
+		String status
+	) {
 		this.name = name;
 		this.email = email;
 		this.status = status;

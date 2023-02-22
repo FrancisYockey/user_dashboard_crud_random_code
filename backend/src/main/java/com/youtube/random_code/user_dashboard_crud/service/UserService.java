@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 
 	public UserService(UserRepository userRepository) {
 		this.userRepository = userRepository;
@@ -43,7 +43,10 @@ public class UserService {
 		return newUser;
 	}
 
-	public Optional<UserEntity> updateUser(Integer id, HttpEntity<String> userEntity) {
+	public Optional<UserEntity> updateUser(
+		Integer id,
+		HttpEntity<String> userEntity
+	) {
 		Optional<UserEntity> updatedUser = Optional.empty();
 
 		Optional<UserEntity> currentUser = Optional.ofNullable(userRepository.getUserEntityById(id));
@@ -89,7 +92,10 @@ public class UserService {
 		return userModel;
 	}
 
-	private UserEntity modifyUser(User newlyUpdatedUser, UserEntity userEntity) {
+	private UserEntity modifyUser(
+		User newlyUpdatedUser,
+		UserEntity userEntity
+	) {
 		if(newlyUpdatedUser.getName() != null) {
 			userEntity.setName(newlyUpdatedUser.getName());
 		}
@@ -103,5 +109,15 @@ public class UserService {
 		}
 
 		return userEntity;
+	}
+
+	public Optional<UserEntity> removeUser(Integer id) {
+		Optional<UserEntity> optionalUser = userRepository.findById(id);
+
+		if(optionalUser.isPresent()) {
+			userRepository.deleteById(id);
+		}
+
+		return optionalUser;
 	}
 }

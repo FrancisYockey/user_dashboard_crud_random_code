@@ -11,24 +11,25 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
-	private UserService userService;
+	private final UserService userService;
 
 	public UserController(UserService userService) {
 		this.userService = userService;
 	}
 
-	@GetMapping("/user")
-	public UserEntity getUserById(@RequestParam Integer id) {
+	@GetMapping("/{id}")
+	public UserEntity getUser(@PathVariable Integer id) {
 		return userService.getUserById(id);
 	}
 
-	@GetMapping("/users")
+	@GetMapping
 	public List<UserEntity> getUsers() {
 		return userService.getAllUsers();
 	}
 
-	@PostMapping("new-user")
+	@PostMapping
 	public ResponseEntity<Integer> addUser(HttpEntity<String> userEntity) {
 		Optional<UserEntity> newUser = userService.addNewUser(userEntity);
 
@@ -43,9 +44,9 @@ public class UserController {
 		return new ResponseEntity<>(userId, status);
 	}
 
-	@PutMapping("updated-user")
+	@PutMapping("{id}")
 	public ResponseEntity<Integer> updateUser(
-		@RequestParam Integer id,
+		@PathVariable Integer id,
 		HttpEntity<String> userEntity
 	) {
 		Optional<UserEntity> updatedUser = userService.updateUser(id, userEntity);
@@ -55,6 +56,21 @@ public class UserController {
 
 		if(updatedUser.isPresent()) {
 			userId = updatedUser.get().getId();
+			status = HttpStatus.OK;
+		}
+
+		return new ResponseEntity<>(userId, status);
+	}
+
+	@DeleteMapping("{id}")
+	public ResponseEntity<Integer> deleteUser(@PathVariable Integer id) {
+		Optional<UserEntity> removedUser = userService.removeUser(id);
+
+		Integer userId = null;
+		HttpStatus status = HttpStatus.CONFLICT;
+
+		if(removedUser.isPresent()) {
+			userId = removedUser.get().getId();
 			status = HttpStatus.OK;
 		}
 
